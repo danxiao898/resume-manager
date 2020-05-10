@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <th:block th:replace="fragments/head :: public-css"/>
+</head>
+
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
+<!-- Site wrapper -->
+<div class="wrapper">
+
+    <!-- 头部区域 Navbar -->
+    <th:block th:replace="fragments/main-header"/>
+    <!-- /.navbar -->
+
+    <!-- 左侧区域 Main Sidebar Container -->
+    <th:block th:replace="fragments/main-sidebar(activeUrl='/question')"/>
+
+    <!-- 右侧主区域 Content Wrapper. Contains page content -->
+    <div class="content-wrapper  text-sm">
+        <!-- 右侧导航区域 Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>编辑问题</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">问题列表</a></li>
+                            <li class="breadcrumb-item active">编辑问题</li>
+                        </ol>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- form start -->
+                        <form th:action="@{/question}" th:method="post" th:object="${question}">
+                            <input th:value="*{id}" name="id" type="hidden" id="id">
+                            <input th:if="*{id != null}" name="_method" value="put" type="hidden">
+
+                            <!-- general form elements -->
+                            <div class="card card-primary">
+                                <div class="card-header">
+                                    <h3 class="card-title">题目及选项
+                                    </h3>
+                                </div>
+                                <!-- /.card-header -->
+                                <div class="card-body ml-4">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="col">
+                                                <div class="form-inline form-group ">
+                                                    <label class="col-sm-2"><span
+                                                            style="color: red; ">*</span>问题描述:</label>
+                                                    <div class="col-sm-10">
+                                                        <textarea th:text="*{des}" type="text" name="des"
+                                                                  class="form-control " style="width: 100%" rows="8"
+                                                                  placeholder="请输问题描述" required/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-6">
+                                            <div class="row">
+                                                <div class="form-inline form-group ">
+                                                    <label class="col-sm-2"><span
+                                                            style="color: red; ">*</span>A选项:</label>
+                                                    <div class="col-sm-10">
+                                                        <textarea th:text="*{optionA}" type="text" name="optionA"
+                                                                  class="form-control " rows="1" cols="80"
+                                                                  placeholder="请输问题描述" required/>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="form-inline form-group ">
+                                                    <label class="col-sm-2"><span
+                                                            style="color: red; ">*</span>B选项:</label>
+                                                    <div class="col-sm-10">
+                                                        <textarea th:text="*{optionB}" type="text" name="optionB"
+                                                                  class="form-control " rows="1" cols="80"
+                                                                  placeholder="请输问题描述" required/>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="form-inline form-group ">
+                                                    <label class="col-sm-2"><span
+                                                            style="color: red; ">*</span>C选项:</label>
+                                                    <div class="col-sm-10">
+                                                        <textarea th:text="*{optionC}" type="text" name="optionC"
+                                                                  class="form-control " rows="1" cols="80"
+                                                                  placeholder="请输问题描述" required/>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="form-inline form-group ">
+                                                    <label class="col-sm-2"><span
+                                                            style="color: red; ">*</span>D选项:</label>
+                                                    <div class="col-sm-10">
+                                                        <textarea th:text="*{optionD}" type="text" name="optionD"
+                                                                  class="form-control " rows="1" cols="80"
+                                                                  placeholder="请输问题描述" required/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                                <!--  角色-->
+                                <div class="card card-primary">
+                                    <div class="card-header">
+                                        <h3 class="card-title">答案及类别</h3>
+                                    </div>
+                                    <div class="card-body ml-4">
+
+                                        <div class="col-5">
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <div class="form-inline form-group ">
+                                                        <label class="col-sm-3"><span
+                                                                style="color: red; ">*</span>答案:</label>
+                                                        <div class="col-sm-9">
+                                                            <select id="answer" name="answer" class="form-control">
+                                                                <option value="-">请选择</option>
+                                                                <option value="A" th:selected="*{answer == 'A'}">A
+                                                                </option>
+                                                                <option value="B" th:selected="*{answer == 'B'}">B
+                                                                </option>
+                                                                <option value="C" th:selected="*{answer == 'C'}">C
+                                                                </option>
+                                                                <option value="D" th:selected="*{answer == 'D'}">D
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-6">
+                                                    <div class="form-inline form-group ">
+                                                        <label class="col-sm-3"><span
+                                                                style="color: red; ">*</span>类别:</label>
+                                                        <div class="col-sm-9">
+                                                            <select id="QuestionTypeId" name="QuestionTypeId"
+                                                                    class="form-control">
+                                                                <option value="-">请选择类别</option>
+                                                                <option th:each="qt : ${questionTypes}"
+                                                                        th:value="${qt.id}" th:text="${qt.name}"
+                                                                        th:selected="${question.questionType.id == qt.id}">
+                                                                    请选择类别
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- /.card-body -->
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="row">
+                                        <div class="ml-5">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fa fa-check"></i>&nbsp;提交
+                                            </button>
+                                            <button type="button" th:onclick="location.href=[[@{/question}]]"
+                                                    class="btn btn-default">
+                                                <i class="fa fa-reply-all"></i>&nbsp;返回
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /.form -->
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.row -->
+                </div><!-- /.container-fluid -->
+            </div>
+        </section>
+        <!-- /.content -->
+    </div>
+
+    <!--右底部区域-->
+    <th:block th:replace="fragments/main-footer"/>
+
+    <!-- 右上角工具栏 Control Sidebar -->
+    <th:block th:replace="fragments/control-sidebar"/>
+</div>
+<!-- ./wrapper -->
+
+<th:block th:replace="fragments/script :: public-js"/>
+<th:block th:replace="fragments/script :: inputmask-js"/>
+</body>
+</html>

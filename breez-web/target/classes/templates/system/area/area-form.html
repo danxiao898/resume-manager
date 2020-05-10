@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <th:block th:replace="fragments/head :: public-css"/>
+    <th:block th:replace="fragments/head :: ztree-css"/>
+</head>
+
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<!-- Site wrapper  -->
+<div class="wrapper">
+
+    <!-- 头部区域 Navbar -->
+    <th:block th:replace="fragments/main-header"/>
+    <!-- /.navbar -->
+
+    <!-- 左侧区域 Main Sidebar Container -->
+    <th:block th:replace="fragments/main-sidebar(activeUrl= '/area')"/>
+
+    <!-- 右侧主区域 Content Wrapper. Contains page content -->
+    <div class="content-wrapper  text-sm">
+        <!-- 右侧导航区域 Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>编辑资源</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">资源列表</a></li>
+                            <li class="breadcrumb-item active">编辑资源</li>
+                        </ol>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+
+                    <!-- tree树展示权限资源 -->
+                    <div class="col-md-3">
+                        <!-- general form elements -->
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h3 class="card-title">权限资源</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label class="col-form-label">选择上级资源：</label>
+                                    <button class="btn btn-info btn-sm" onclick="parentArea()">根节点</button>
+                                    <div>
+                                        <ul class="ztree" style="overflow: auto;" id="areaTree"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- / tree树展示权限资源 -->
+
+                    <div class="col-md-9">
+                        <!-- general form elements -->
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h3 class="card-title">基本信息</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <form id="form" th:action="@{/area}" th:method="post" th:object="${area}">
+                                <input name="_method" th:if="*{id != null}" value="put" type="hidden">
+                                <input id="id" name="id" th:value="*{id}" type="hidden">
+                                <div class="card-body ml-4">
+
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group">
+                                                <label class="col-sm-3  col-form-label"><span
+                                                        style="color: red;">*</span>上级资源：</label>
+                                                <div class="col-sm-9">
+                                                    <input id="parentId" th:value="*{parentId}" name="parentId"
+                                                           type="hidden">
+                                                    <input id="parentName" th:value="*{parentName}"
+                                                           name="parentName"
+                                                           type="text" placeholder="请在右侧选择上级" class="form-control"
+                                                           readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                      <div class="col-sm-6">
+                                        <!-- radio -->
+                                        <div class="form-inline form-group">
+                                          <label class="col-sm-3">区域类型：</label>
+                                          <div class="col-sm-9 form-inline">
+                                            <div class="form-check">
+                                              <input th:field="*{type}" value="1" type="radio"
+                                                     name="accountNonExpired" class="form-check-input " onclick="enableUrl()"
+                                                     checked>
+                                              <label class="form-check-label ">区/县&nbsp;</label>
+                                            </div>
+                                            <div class="form-check">
+                                              <input th:field="*{type}" value="2" type="radio"
+                                                     name="accountNonExpired" class="form-check-input" onclick="disableUrl()">
+                                              <label class="form-check-label">市</label>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                    </div>
+
+                                    <div class="row">
+                                      <div class="col-sm-6">
+                                        <div class="form-inline form-group ">
+                                          <label class="col-sm-3"><span
+                                                  style="color: red; ">*</span>区域名：</label>
+                                          <div class="col-sm-9">
+                                            <input th:value="*{name}" type="text" name="name"
+                                                   class="form-control col-15" placeholder="请输入区域名"
+                                                   required>
+                                          </div>
+                                        </div>
+                                      </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group">
+                                                <label class="col-sm-3"><span
+                                                        style="color: red; ">*</span>接口地址：</label>
+                                                <div class="col-sm-9">
+                                                    <input id="httpUrl" th:value="*{url}" type="text" name="url"
+                                                           class="form-control col-15"
+                                                           placeholder="请输入接口地址" required>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="row">
+                                      <div class="col-sm-6">
+                                        <div class="form-inline form-group">
+                                          <label class="col-sm-3"><span
+                                                  style="color: red; ">*</span>负责人：</label>
+                                          <div class="col-sm-9">
+                                            <input th:value="*{principalPeople}" type="text"
+                                                   name="principalPeople"
+                                                   class="form-control" placeholder="请输入负责人名字" required>
+                                          </div>
+                                        </div>
+                                      </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group">
+                                                <label class="col-sm-3"><span
+                                                        style="color: red; ">*</span>手机号：</label>
+                                                <div class="col-sm-9">
+                                                    <input th:value="*{mobilePhone}" type="text" name="mobilePhone"
+                                                           class="form-control" placeholder="请输入邮箱" required>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                    <div class="row">
+                                      <div class="col-sm-6">
+                                        <div class="form-inline form-group">
+                                          <label class="col-sm-3"><span
+                                                  style="color: red; ">*</span>邮箱：</label>
+                                          <div class="col-sm-9">
+                                            <input th:value="*{mail}" type="text" name="mail"
+                                                   class="form-control"
+                                                   data-inputmask="'alias': 'email'" data-mask
+                                                   placeholder="请输入邮箱"
+                                                   required>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+
+
+                                </div>
+
+
+                                <!--                  -->
+                                <!--                  <div class="row">-->
+                                <!--                    -->
+                                <!--                  </div>-->
+
+                                <div class="card-footer text-center">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fa fa-check"></i>&nbsp;提交
+                                    </button>
+                                    <button type="button" th:onclick="location.href=[[@{/area}]]"
+                                            class="btn btn-default">
+                                        <i class="fa fa-reply-all"></i>&nbsp;返回
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+    </div>
+
+    <!--右底部区域-->
+    <th:block th:replace="fragments/main-footer"/>
+
+    <!-- 右上角工具栏 Control Sidebar -->
+    <th:block th:replace="fragments/control-sidebar"/>
+</div>
+<!-- ./wrapper -->
+
+<th:block th:replace="fragments/script :: public-js"/>
+<th:block th:replace="fragments/script :: inputmask-js"/>
+<th:block th:replace="fragments/script :: ztree-js"/>
+<th:block th:replace="fragments/script :: layer-js"/>
+<script th:src="@{/modules/js/area/area-form.js}"></script>
+
+</body>
+</html>

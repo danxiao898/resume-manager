@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="zh-cn">
+
+<!--<head>-->
+<!--    <th:block th:replace="fragments/head :: public-css"/>-->
+<!--</head>-->
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"
+    />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="email=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="renderer" content="webkit">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Amaze UI" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>职位查找</title>
+
+
+    <link th:href="@{/plugins/fontawesome-free/css/all.min.css}" rel="stylesheet" href="../plugins/fontawesome-free/css/all.min.css">
+    <!-- Ionicons -->
+    <!-- <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css"> -->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" >
+    <!-- overlayScrollbars -->
+    <link th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}" rel="stylesheet" href="../plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+    <!-- Theme style -->
+    <link th:href="@{/dist/css/adminlte.min.css}" rel="stylesheet" href="../dist/css/adminlte.min.css">
+    <!-- Google Font: Source Sans Pro -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+
+
+    <link rel="shortcut icon" th:href="@{/assets/images/favicon.ico}" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/assets/css/typo.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/font-awesome.min.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/table.css}">
+<!--    <link rel="stylesheet" th:href="@{/assets/css/index.css}">-->
+
+    <script>
+        function loading() {
+            document.getElementsByClassName('avatar')[0].style.display = 'block';
+            document.getElementsByClassName('loading')[0].style.display = 'none';
+        }
+    </script>
+</head>
+
+<body style="height: auto;padding-left: 0px;padding-right: 0px; padding-top: 0px;">
+
+    <div th:if="${disableToolBar == null}">
+        <th:block th:replace="fragments/main-header-user"/>
+    </div>
+
+    <section class="content">
+        <div class="card">
+
+            <div class="card-body">
+                <div>
+                    <div th:each="q,iterState : ${questionRecords}" class="form-group">
+                        <h5><b th:text="'[' + ${iterState.count} + '] ' + ${q.question.des}"></b></h5>
+                        <br/>
+                        <div>
+                            <span  class="custom-radio"  th:text="${' [A] ' + q.question.optionA}"/><br/>
+                            <span  class="custom-radio"  th:text="${' [B] ' + q.question.optionB}"/><br/>
+                            <span  class="custom-radio"  th:text="${' [C] ' + q.question.optionC}"/><br/>
+                            <span  class="custom-radio"  th:text="${' [D] ' + q.question.optionD}"/><br/>
+                        </div>
+                        <br/>
+                        <span th:text="'我的答案:' + ${q.answer}"></span><br/>
+                        <span th:if="${q.answer == q.question.answer}" th:text="'正确答案:' + ${q.question.answer}"></span>
+                        <span th:if="${q.answer != q.question.answer}" style="color: rgb(255,0,0)" th:text="'正确答案:' + ${q.question.answer}"></span>
+                        <br/>
+                        <br/>
+                    </div>
+
+
+
+                    <button type="submit" class="btn btn-primary" disabled>
+                        <i class="fa fa-info"></i>&nbsp;已作答
+                    </button>
+                    <br/>
+                    <br/>
+                    <h5><b th:text="'答对题目数:' + ${rightCount}"/></h5>
+
+                    <div th:if="${disableToolBar != null}" align="center">
+                        <a th:href="@{/position/status}"><button type="button" class="btn btn-info fa fa-reply-all">返回</button></a>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+    <th:block th:replace="fragments/control-sidebar"/>
+
+    <th:block th:replace="fragments/script :: public-js"/>
+    <th:block th:replace="fragments/script :: inputmask-js"/>
+    <th:block th:replace="fragments/script :: bootstrap-table-js"/>
+    <th:block th:replace="fragments/script :: layer-js"/>
+    <script th:src="@{/modules/js/common.js}"></script>
+    <script th:src="@{/modules/js/position/position-apply-list.js}"></script>
+
+    <script>
+        function showOperation() {
+
+        }
+
+    </script>
+</body>
+
+</html>

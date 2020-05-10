@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>新用户注册</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!---->
+  <th:block th:replace="fragments/head :: public-css"/>
+  <th:block th:replace="fragments/head :: bootstrap-table-css"/>
+</head>
+<body class="hold-transition register-page">
+<div class="register-box">
+  <div class="register-logo">
+    <a href="../../index2.html"><b>新用户注册</b></a>
+  </div>
+
+  <div class="card">
+    <div class="card-body register-card-body">
+
+      <div>
+
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" name="nickName" id="nickName" placeholder="昵称" required>
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-user-tag"></span>
+            </div>
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" name="mobile" id="mobile" placeholder="手机号" required>
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-phone"></span>
+            </div>
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" name="username" id="username" placeholder="用户名" required>
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-user"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="input-group mb-3">
+          <input type="password" class="form-control" name="password1" id="password1" placeholder="密码" required>
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <input type="password" class="form-control" name="password2" id="password2" placeholder="确认密码" required>
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="input-group mb-3">
+          <input type="email" class="form-control" name="email" id="email" placeholder="邮箱" data-inputmask="'alias': 'email'" data-mask required>
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-envelope"></span>
+            </div>&nbsp;&nbsp;
+
+<!--            <a onclick="sendCode()" class="btn btn-xs btn-info"><i class="fa fa-send"></i>验证码</a>-->
+            <a class="btn btn-default" onclick="sendCode()" href="#">获取验证码</a>
+          </div>
+
+        </div>
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" name="code" id="code" placeholder="邮箱验证码" required>
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-code"></span>
+            </div>
+          </div>
+        </div>
+
+        <button onclick="sendSubmit()" class="btn btn-primary btn-block">注册</button>
+
+      </div>
+
+      <a th:href="@{/login/page}" class="text-center">返回登陆</a>
+    </div>
+    <!-- /.form-box -->
+  </div><!-- /.card -->
+</div>
+<!-- /.register-box -->
+
+<!-- jQuery -->
+<th:block th:replace="fragments/script :: public-js"/>
+<th:block th:replace="fragments/script :: bootstrap-table-js"/>
+<th:block th:replace="fragments/script :: layer-js"/>
+<th:block th:replace="fragments/script :: inputmask-js"/>
+
+<!--公共的js-->
+<script th:src="@{/modules/js/common.js}"></script>
+<script th:src="@{/modules/js/role/role-list.js}"></script>
+
+<script>
+  function sendCode() {
+    var email = $("#email").val().trim();
+
+    if(email == null || email == '') {
+      alert("邮箱不能为空")
+    }
+
+    console.log("邮箱：" + email);
+
+    $.ajax({
+      url: contextPath + 'user/sendCode',
+      type: 'POST',//此处仍然使用post
+      data: 'email=' + email,
+      dataType: 'json',
+      success: function (result) {
+        console.log(result);
+        if(result.code == 200) {
+          layer.msg('操作成功', {icon: 1, time: 2000, shift: 5});
+        }else {
+          layer.msg('操作失败');
+        }
+      },
+      error: function () {
+        layer.msg('请求异常');
+      }
+    })
+  }
+
+  function sendSubmit() {
+    var nickName = $("#nickName").val().trim();
+    var mobile = $("#mobile").val().trim();
+    var username = $("#username").val().trim();
+    var password1 = $("#password1").val().trim();
+    var password2 = $("#password2").val().trim();
+    var email = $("#email").val().trim();
+    var code = $("#code").val().trim();
+
+    if(nickName == '') {
+      alert("用户昵称不为空");
+      return;
+    } else if(mobile == '') {
+      alert("手机号不为空");
+      return;
+    } else if(username == '') {
+      alert("用户名不为空");
+      return;
+    } else if(password1 == '' || password2 == '') {
+      alert("请填写密码");
+      return;
+    } else if(password1 != password2) {
+      alert("两次填写的密码不一致");
+      return;
+    } else if(email == '') {
+      alert("邮箱不为空");
+      return;
+    } else if (code == '') {
+      alert("邮箱验证码不为空");
+      return;
+    }
+
+    var data = {};
+
+    data["nickName"] = nickName;
+    data["mobile"] = mobile;
+    data["username"] = username;
+    data["password"] = password1;
+    data["email"] = email;
+
+
+    $.ajax({
+      url: contextPath + 'user/register?code=' + code,
+      type: 'POST',//此处仍然使用post
+      data: JSON.stringify(data),
+      dataType: 'json',
+      contentType:'application/json;charset=UTF-8',
+      success: function (result) {
+        console.log(result);
+        if(result.code == 200) {
+          layer.msg('操作成功', {icon: 1, time: 3000, shift: 5});
+        }else {
+          alert("操作失败:" + result.message);
+        }
+      },
+      error: function () {
+        layer.msg('请求异常');
+      }
+    })
+
+  }
+</script>
+</body>
+</html>

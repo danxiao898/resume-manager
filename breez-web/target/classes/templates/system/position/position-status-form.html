@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <th:block th:replace="fragments/head :: public-css"/>
+</head>
+
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
+<!-- Site wrapper -->
+<div class="wrapper">
+
+    <!-- 头部区域 Navbar -->
+    <th:block th:replace="fragments/main-header"/>
+    <!-- /.navbar -->
+
+    <!-- 左侧区域 Main Sidebar Container -->
+    <th:block th:replace="fragments/main-sidebar(activeUrl='/position/status')"/>
+
+    <!-- 右侧主区域 Content Wrapper. Contains page content -->
+    <div class="content-wrapper  text-sm">
+        <!-- 右侧导航区域 Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>进度更改</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">申请进度</a></li>
+                            <li class="breadcrumb-item active">进度更改</li>
+                        </ol>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- form start -->
+                        <form th:action="@{/position/status}" th:method="post" th:object="${positionApplyStatus}">
+                            <input th:value="*{id}" name="id" type="hidden" id="id">
+                            <input th:if="*{id != null}" name="_method" value="put" type="hidden">
+
+                            <!-- general form elements -->
+                            <div class="card card-primary">
+                                <div class="card-header">
+                                    <h3 class="card-title">基本信息
+                                    </h3>
+                                </div>
+                                <!-- /.card-header -->
+                                <div class="card-body ml-4">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3">申请者：</label>
+                                                <div class="col-sm-9">
+                                                    <input th:value="*{userBaseInfo.name}" type="text"
+                                                           class="form-control col-15"  readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3">性别：</label>
+                                                <div class="col-sm-9">
+                                                    <input th:value="*{userBaseInfo.sex == 1 ? '男': '女'}" type="text"
+                                                           class="form-control col-15"  readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3">年龄：</label>
+                                                <div class="col-sm-9">
+                                                    <input th:value="*{userBaseInfo.age}" type="text"
+                                                           class="form-control col-15"  readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3">申请职位：</label>
+                                                <div class="col-sm-9">
+                                                    <input th:value="*{position.name}" type="text"
+                                                           class="form-control col-15"  readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+                                    <div class="row">
+
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3">工作地点：</label>
+                                                <div class="col-sm-9">
+                                                    <input th:value="*{position.location}" type="text"
+                                                           class="form-control col-15" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3">招聘途径：</label>
+                                                <div class="col-sm-9">
+                                                    <select class="form-control" disabled>
+                                                        <option value="1" th:selected="*{position.wayType == 1}">校招</option>
+                                                        <option value="2" th:selected="*{position.wayType == 2}">社招</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3">薪资范围：</label>
+                                                <div class="col-sm-9">
+                                                    <input th:value="*{position.lowerSalary}" type="number"
+                                                           class="form-control col-15" style="width: 80px" readonly>
+                                                    --
+                                                    <input th:value="*{position.upperSalary}" type="number"
+                                                           class="form-control col-15" style="width: 80px" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="card card-success">
+                                    <div class="card-header">
+                                        <h3 class="card-title">进度修改</h3>
+                                    </div>
+                                    <div class="card-body ml-4">
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <div class="form-inline form-group ">
+                                                    <label class="col-sm-3">修改为：</label>
+                                                    <div class="col-sm-9">
+                                                        <select class="form-control" name="status">
+                                                            <option value="0" th:selected="*{status == 0}">待查看</option>
+                                                            <option value="1" th:selected="*{status == 1}">已查看</option>
+                                                            <option value="2" th:selected="*{status == 2}">邀请一面</option>
+                                                            <option value="3" th:selected="*{status == 3}">邀请二面</option>
+                                                            <option value="4" th:selected="*{status == 4}">未通过</option>
+                                                            <option value="5" th:selected="*{status == 5}">已通过</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- /.card-body -->
+                                    </div>
+
+                                </div>
+
+                                <div class="card card-success">
+                                    <div class="card-header">
+                                        <h3 class="card-title">邮件通知</h3>
+                                    </div>
+                                    <div class="card-body ml-4">
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <div class="form-inline form-group ">
+                                                    <label class="col-sm-3">邮箱：</label>
+                                                    <div class="col-sm-9">
+                                                        <input th:value="*{userBaseInfo.email}" name="email"
+                                                               class="form-control col-15" readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <div class="form-inline form-group ">
+                                                    <label class="col-sm-3">邮件内容：</label>
+                                                    <div class="col-sm-9">
+                                                            <textarea th:text="''" type="text" name="mailMessage"
+                                                                      class="form-control " rows="8" style="width: 100%"
+                                                                      placeholder="请输入邮件内容，邮件内容为空时，不进行邮件通知"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- /.card-body -->
+                                    </div>
+                                </div>
+
+
+                                <div class="card-footer">
+                                    <div class="row">
+                                        <div class="ml-5">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fa fa-check"></i>&nbsp;提交
+                                            </button>
+                                            <a th:href="@{/position/status}">
+                                                <button type="button"
+                                                        class="btn btn-default">
+                                                    <i class="fa fa-reply-all"></i>&nbsp;返回
+                                                </button>
+                                            </a>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- /.form -->
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.row -->
+                </div><!-- /.container-fluid -->
+            </div>
+        </section>
+        <!-- /.content -->
+    </div>
+
+    <!--右底部区域-->
+    <th:block th:replace="fragments/main-footer"/>
+
+    <!-- 右上角工具栏 Control Sidebar -->
+    <th:block th:replace="fragments/control-sidebar"/>
+</div>
+<!-- ./wrapper -->
+
+<th:block th:replace="fragments/script :: public-js"/>
+<th:block th:replace="fragments/script :: inputmask-js"/>
+</body>
+</html>

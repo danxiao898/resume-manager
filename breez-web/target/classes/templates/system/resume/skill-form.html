@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <th:block th:replace="fragments/head :: public-css"/>
+</head>
+
+
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
+<!-- Site wrapper -->
+<div class="wrapper">
+
+    <th:block th:replace="fragments/main-header-user"/>
+
+<!--    &lt;!&ndash; 头部区域 Navbar &ndash;&gt;
+    <th:block th:replace="fragments/main-header"/>
+    &lt;!&ndash; /.navbar &ndash;&gt;
+
+    &lt;!&ndash; 左侧区域 Main Sidebar Container &ndash;&gt;
+    <th:block th:replace="fragments/main-sidebar(activeUrl='/resume/baseInfo')"/>-->
+
+    <!-- 右侧主区域 Content Wrapper. Contains page content -->
+<!--    <div class="content-wrapper  text-sm">-->
+    <div>
+        <!-- 右侧导航区域 Content Header (Page header) -->
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- form start -->
+                        <form th:action="@{/resume/skill}" th:method="post" th:object="${userProfessionalSkill}">
+                            <input th:value="*{id}" name="id" type="hidden" id="id">
+                            <input th:value="*{userId}" name="userId" type="hidden" id="userId">
+                            <input th:if="*{id != null}" name="_method" value="put" type="hidden">
+
+                            <!-- general form elements -->
+                            <div class="card card-primary">
+                                <div class="card-header">
+                                    <h3 class="card-title">技能信息
+                                    </h3>
+                                </div>
+                                <!-- /.card-header -->
+                                <div class="card-body ml-4">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3"><span style="color: red; ">*</span>技能名：</label>
+                                                <div class="col-sm-9">
+                                                    <input th:value="*{name}" type="text" name="name"
+                                                           class="form-control col-15" placeholder="请输入技能名" required>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3"><span style="color: red; ">*</span>熟练程度（1-100）：</label>
+                                                <div class="col-sm-9">
+                                                    <input th:value="*{masteryDegree}" max="100" min="1" data-inputmask="" type="number" name="masteryDegree"
+                                                           class="form-control col-15" placeholder="请输入熟练程度" required>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+                                </div>
+
+                                <div class="card-footer">
+                                    <div class="row">
+                                        <div class="ml-5">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fa fa-check"></i>&nbsp;提交
+                                            </button>
+
+                                            <button th:if="*{id != null}"
+                                                    type="button"
+                                                    onclick="$.deleteResumeInfo(contextPath + 'resume/skill/' + $('#id').val())"
+                                                    class="btn btn-default">
+                                                <i class="fa fa-remove"></i>&nbsp;删除
+                                            </button>
+
+                                            <button type="button" th:onclick="location.href=[[@{/resume/edit}]]"
+                                                    class="btn btn-default">
+                                                <i class="fa fa-reply-all"></i>&nbsp;返回
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- /.form -->
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.row -->
+                </div><!-- /.container-fluid -->
+            </div>
+        </section>
+        <!-- /.content -->
+    </div>
+
+    <!--右底部区域-->
+<!--    <th:block th:replace="fragments/main-footer"/>-->
+
+    <!-- 右上角工具栏 Control Sidebar -->
+    <th:block th:replace="fragments/control-sidebar"/>
+</div>
+<!-- ./wrapper -->
+<!-- jQuery  -->
+<!--<th:block th:replace="fragments/script :: inputmask-js"/>-->
+<!--公共的js-->
+<th:block th:replace="fragments/script :: public-js"/>
+<th:block th:replace="fragments/script :: bootstrap-table-js"/>
+<th:block th:replace="fragments/script :: layer-js"/>
+<!--公共的js-->
+<script th:src="@{/modules/js/common.js}"></script>
+
+</body>
+</html>

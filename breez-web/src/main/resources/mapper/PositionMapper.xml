@@ -1,0 +1,119 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.breez.web.mapper.PositionMapper">
+
+	<!--定义positionType属性的结果映射-->
+	<resultMap id="positionTypeMap" type="PositionType">
+		<id column="pt_id" property="id"/>
+		<result column="pt_name" property="name"/>
+	</resultMap>
+
+	<!--定义department属性的结果映射-->
+	<resultMap id="departmentMap" type="Department">
+		<id column="d_id" property="id"/>
+		<result column="d_name" property="name"/>
+	</resultMap>
+
+	<resultMap id="positionMap" type="Position">
+		<id column="id" property="id"/>
+		<result column="position_type_id" property="positionTypeId"/>
+		<result column="department_id" property="departmentId"/>
+		<result column="name" property="name"/>
+		<result column="way_type" property="wayType"/>
+		<result column="location" property="location"/>
+		<result column="work_experience" property="workExperience"/>
+		<result column="responsibility" property="responsibility"/>
+		<result column="requirement" property="requirement"/>
+		<result column="lower_salary" property="lowerSalary"/>
+		<result column="upper_salary" property="upperSalary"/>
+		<result column="create_time" property="createTime"/>
+
+		<!--多对一关系映射-->
+		<association property="positionType" resultMap="positionTypeMap"/>
+		<!--多对一关系映射-->
+		<association property="department" resultMap="departmentMap"/>
+	</resultMap>
+
+	<!--定义查询公共代码片段-->
+	<sql id="selectPositionPublic">
+		SELECT
+			`position`.`id`,
+			`position`.`position_type_id`,
+			`position`.`department_id`,
+			`position`.`name`,
+			`position`.`way_type`,
+			`position`.`location`,
+			`position`.`work_experience`,
+			`position`.`responsibility`,
+			`position`.`requirement`,
+			`position`.`lower_salary`,
+			`position`.`upper_salary`,
+			`position`.`create_time`,
+			position_type.id AS pt_id,
+			position_type.`name` AS pt_name,
+			department.id AS d_id,
+			department.`name` AS d_name
+		FROM
+			`position`
+			LEFT JOIN position_type ON `position`.position_type_id = position_type.id
+			LEFT JOIN department ON `position`.department_id = department.id
+	</sql>
+
+	<select id="selectPage" resultMap="positionMap">
+		<include refid="selectPositionPublic"></include>
+		<where>
+			<!--检索条件：职位名,模糊查找-->
+			<if test="p.name != null and p.name != ''">
+				AND `position`.`name` LIKE CONCAT('%',#{p.name},'%')
+			</if>
+
+			<!--检索条件，工作地点，模糊查找-->
+			<if test="p.location != null and p.location != ''">
+				AND `position`.location LIKE CONCAT('%',#{p.location},'%')
+			</if>
+
+			<!--检索条件，招聘途径-->
+			<if test="p.wayType != null and p.wayType != ''">
+				AND `position`.way_type = #{p.wayType}
+			</if>
+
+			<!--检索条件，工作类别-->
+			<if test="p.positionType != null and p.positionType.name != null and p.positionType.name != ''">
+				AND position_type.`name` = #{p.positionType.name}
+			</if>
+
+			<!--检索条件，部门名称-->
+			<if test="p.department != null and p.department.id != null and p.department.id != ''">
+				AND department.`id` = #{p.department.id}
+			</if>
+
+			<!--检索条件，经验要求-->
+			<if test="p.workExperience != null and p.workExperience != ''">
+				AND `position`.work_experience <![CDATA[ <= ]]> #{p.workExperience}
+			</if>
+
+			<!--根据目标薪资筛选在此范围的-->
+			<if test="p.filterSalary != null and p.filterSalary != ''">
+				AND `position`.lower_salary <![CDATA[ <= ]]> #{p.filterSalary} AND `position`.upper_salary <![CDATA[ >= ]]> #{p.filterSalary}
+			</if>
+
+		</where>
+	</select>
+
+	<select id="findById" resultMap="positionMap">
+		<include refid="selectPositionPublic"></include>
+		WHERE `position`.`id` = #{id}
+	</select>
+	
+	<select id="getAllLocation" resultType="java.lang.String">
+		SELECT DISTINCT `location` FROM `position`
+	</select>
+
+	<insert id="applyPosition">
+		INSERT INTO position_apply_status(position_id,user_id,apply_time,status) VALUES (#{pid}, #{uid}, NOW(),0)
+	</insert>
+
+
+</mapper>

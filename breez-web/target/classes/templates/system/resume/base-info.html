@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <th:block th:replace="fragments/head :: public-css"/>
+</head>
+
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
+<!-- Site wrapper -->
+<div class="wrapper">
+
+    <th:block th:replace="fragments/main-header-user"/>
+
+<!--    &lt;!&ndash; 头部区域 Navbar &ndash;&gt;
+    <th:block th:replace="fragments/main-header"/>
+    &lt;!&ndash; /.navbar &ndash;&gt;
+
+    &lt;!&ndash; 左侧区域 Main Sidebar Container &ndash;&gt;
+    <th:block th:replace="fragments/main-sidebar(activeUrl='/resume/baseInfo')"/>-->
+
+    <!-- 右侧主区域 Content Wrapper. Contains page content -->
+<!--    <div class="content-wrapper  text-sm">-->
+    <div>
+        <!-- 右侧导航区域 Content Header (Page header) -->
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- form start -->
+                        <form th:action="@{/resume/baseInfo}" th:method="post" th:object="${userBaseInfo}" enctype="multipart/form-data">
+                            <input th:value="*{id}" name="id" type="hidden" id="id">
+                            <input th:value="*{userId}" name="userId" type="hidden" id="userId">
+                            <input th:if="*{id != null}" name="_method" value="put" type="hidden">
+
+                            <div class="card card-primary">
+                                <div class="card-header">
+                                    <h3 class="card-title">个人头像</h3>
+                                </div>
+                                <div class="card-body ml-4">
+
+                                    <div class="row">
+                                        <!--<div class="col-sm-6">
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3"><span style="color: red; ">*</span>个人照片：</label>
+                                                <div class="col-sm-9">
+                                                    <input type="file" name="photo" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3"><span style="color: red; ">*</span>预览：</label>
+&lt;!&ndash;                                                <img class="avatar" style="width: 72px; height: 72px" th:src="@{/assets/images/avatar.jpg}" onload="loading()">&ndash;&gt;
+                                                <img class="avatar" style="width: 72px; height: 72px" src="/Users/wuhualu/Downloads/IMG_0001.jpg" onload="loading()">
+                                            </div>
+                                        </div>-->
+
+                                        <div class="form-inline">
+                                            <img id="ImgCon" style="height: 72px;width: 72px" th:src="@{/upload/} + ${userBaseInfo.photoSrc}">&nbsp;&nbsp;
+                                            <input type="file" id="changeMore" name="photo">
+                                        </div>
+
+
+
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                            </div>
+
+                            <!-- general form elements -->
+                            <div class="card card-primary">
+                                <div class="card-header">
+                                    <h3 class="card-title">个人信息
+                                    </h3>
+                                </div>
+                                <!-- /.card-header -->
+                                <div class="card-body ml-4">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3"><span style="color: red; ">*</span>姓名：</label>
+                                                <div class="col-sm-9">
+                                                    <input th:value="*{name}" type="text" name="name"
+                                                           class="form-control col-15" placeholder="请输入姓名" required>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3"><span
+                                                        style="color: red; ">*</span>性别:</label>
+                                                <div class="col-sm-9">
+                                                    <select id="sex" name="sex" class="form-control">
+                                                        <option value="1" th:selected="${userBaseInfo.sex == 1}">男</option>
+                                                        <option value="2" th:selected="${userBaseInfo.sex == 2}">女</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+                                </div>
+
+                                <div class="card-body ml-4">
+                                    <div class="row">
+
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3"><span style="color: red; ">*</span>年龄：</label>
+                                                <div class="col-sm-9">
+                                                    <input th:value="*{age}" type="number" name="age"
+                                                           class="form-control col-15" placeholder="请输入年龄" required>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3"><span style="color: red; ">*</span>英语水平：</label>
+                                                <div class="col-sm-9">
+                                                    <input th:value="*{cet}" type="text" name="cet"
+                                                           class="form-control col-15" placeholder="请输入英语水平" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="card-body ml-4">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3"><span style="color: red; " >*</span>计算机水平：</label>
+                                                <div class="col-sm-9">
+                                                    <input th:value="*{cct}" type="text" name="cct"
+                                                           class="form-control col-15" placeholder="计算机等级" required>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3"><span style="color: red; ">*</span>求职意向：</label>
+                                                <div class="col-sm-9">
+                                                    <input th:value="*{targetPosition}" type="text" name="targetPosition"
+                                                           class="form-control col-15" placeholder="请输入求职意向" required>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="card-body ml-4">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3"><span style="color: red; ">*</span>期望地：</label>
+                                                <div class="col-sm-9">
+                                                    <input th:value="*{targetLocation}" type="text" name="targetLocation"
+                                                           class="form-control col-15" placeholder="请输入期望地" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="card card-primary">
+                                    <div class="card-header">
+                                        <h3 class="card-title">联系方式</h3>
+                                    </div>
+                                    <div class="card-body ml-4">
+
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <div class="form-inline form-group ">
+                                                    <label class="col-sm-3"><span style="color: red; ">*</span>联系电话：</label>
+                                                    <div class="col-sm-9">
+                                                        <input th:value="*{mobile}" type="text" name="mobile"
+                                                               class="form-control col-15" placeholder="请输入联系电话" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <div class="form-inline form-group ">
+                                                    <label class="col-sm-3"><span style="color: red; ">*</span>邮箱：</label>
+                                                    <div class="col-sm-9">
+                                                        <input th:value="*{email}" type="text" name="email"
+                                                               class="form-control col-15" placeholder="请输入邮箱" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- /.card-body -->
+                                    </div>
+                                </div>
+
+                                <div class="card card-primary">
+                                    <div class="card-header">
+                                        <h3 class="card-title">自我阐述</h3>
+                                    </div>
+                                    <div class="card-body ml-4">
+
+                                        <div class="col-5">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="form-inline form-group ">
+                                                        <label class="col-sm-2"><span
+                                                                style="color: red; ">*</span>自我评价/期望:</label>
+                                                        <div class="col-sm-10">
+                                                            <textarea th:text="${userBaseInfo.narrate}" type="text" name="narrate"
+                                                                      class="form-control " style="width: 100%" rows="8"
+                                                                      placeholder="请输入自我评价/期望" required/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- /.card-body -->
+                                    </div>
+                                </div>
+
+                                <div class="card-footer">
+                                    <div class="row">
+                                        <div class="ml-5">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fa fa-check"></i>&nbsp;提交
+                                            </button>
+                                            <button type="button" th:onclick="location.href=[[@{/resume/edit}]]"
+                                                    class="btn btn-default">
+                                                <i class="fa fa-reply-all"></i>&nbsp;返回
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- /.form -->
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.row -->
+                </div><!-- /.container-fluid -->
+            </div>
+        </section>
+        <!-- /.content -->
+    </div>
+
+    <!--右底部区域-->
+<!--    <th:block th:replace="fragments/main-footer"/>-->
+
+    <!-- 右上角工具栏 Control Sidebar -->
+    <th:block th:replace="fragments/control-sidebar"/>
+</div>
+<!-- ./wrapper -->
+<!-- jQuery  -->
+<th:block th:replace="fragments/script :: public-js"/>
+<th:block th:replace="fragments/script :: inputmask-js"/>
+
+<script>
+    function changeM(){
+        var inputJ = $("#changeMore"),
+            input  = inputJ[0],
+            Con    = $("#ImgCon");
+
+        inputJ.change(function(e){
+            var file     = e.target.files[0],//拿到原始对象
+                thisType = file.type,//获取到表面的名称，可判断文件类型
+                thisSize = file.size,//文件的大小
+                reader   = new FileReader();
+
+            //readAsDataURL(file),读取文件，将文件以数据URL的形式保存在result的属性中
+            reader.readAsDataURL(file);
+
+            //文件加载成功以后，渲染到页面
+            reader.onload = function(e) {
+
+                // var $img = $('<img id="ImgCon" style="height: 72px;width: 72px">').attr("src", e.target.result);
+                // Con.append($img)
+                // Con.replaceWith($img);
+                Con.attr("src", e.target.result);
+            }
+        });
+    }//changeM end!
+    changeM();
+</script>
+</body>
+</html>

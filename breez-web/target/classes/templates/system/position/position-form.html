@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <th:block th:replace="fragments/head :: public-css"/>
+</head>
+
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
+<!-- Site wrapper -->
+<div class="wrapper">
+
+    <!-- 头部区域 Navbar -->
+    <th:block th:replace="fragments/main-header"/>
+    <!-- /.navbar -->
+
+    <!-- 左侧区域 Main Sidebar Container -->
+    <th:block th:replace="fragments/main-sidebar(activeUrl='/position')"/>
+
+    <!-- 右侧主区域 Content Wrapper. Contains page content -->
+    <div class="content-wrapper  text-sm">
+        <!-- 右侧导航区域 Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>编辑职位</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">职位列表</a></li>
+                            <li class="breadcrumb-item active">编辑职位</li>
+                        </ol>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- form start -->
+                        <form th:action="@{/position}" th:method="post" th:object="${position}">
+                            <input th:value="*{id}" name="id" type="hidden" id="id">
+                            <input th:if="*{id != null}" name="_method" value="put" type="hidden">
+
+                            <!-- general form elements -->
+                            <div class="card card-primary">
+                                <div class="card-header">
+                                    <h3 class="card-title">基本信息
+                                    </h3>
+                                </div>
+                                <!-- /.card-header -->
+                                <div class="card-body ml-4">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3"><span style="color: red; ">*</span>职位名：</label>
+                                                <div class="col-sm-9">
+                                                    <input th:value="*{name}" type="text" name="name"
+                                                           class="form-control col-15" placeholder="请输入职位名" required>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3"><span style="color: red; ">*</span>所属部门：</label>
+                                                <div class="col-sm-9">
+                                                    <select id="departmentId" name="departmentId" class="form-control">
+                                                        <option value="">请选择</option>
+                                                        <option th:each="de : ${departments}" th:value="${de.id}" th:text="${de.name}" th:selected="${position.department.id == de.id}">web开发部</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3"><span style="color: red; ">*</span>工作地点：</label>
+                                                <div class="col-sm-9">
+                                                    <input th:value="*{location}" type="text" name="location"
+                                                           class="form-control col-15" placeholder="请输入工作地点" required>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3"><span style="color: red; ">*</span>招聘途径：</label>
+                                                <div class="col-sm-9">
+                                                    <select id="wayType" name="wayType" class="form-control">
+                                                        <option value="1" th:selected="${position.wayType == 1}">校招</option>
+                                                        <option value="2" th:selected="${position.wayType == 2}">社招</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3"><span style="color: red; ">*</span>经验(年)：</label>
+                                                <div class="col-sm-9">
+                                                    <input th:value="*{workExperience}" type="number" name="workExperience"
+                                                           class="form-control col-15" placeholder="请输入年限要求" required>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3"><span style="color: red; ">*</span>职位类别：</label>
+                                                <div class="col-sm-9">
+                                                    <select id="positionTypeId" name="positionTypeId" class="form-control">
+                                                        <option value="">请选择</option>
+                                                        <option th:each="pt : ${positionTypes}" th:value="${pt.id}" th:text="${pt.name}" th:selected="${position.positionType.id == pt.id}">研发类</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3"><span style="color: red; ">*</span>薪资范围：</label>
+                                                <div class="col-sm-9">
+                                                    <input th:value="*{lowerSalary}" type="number" name="lowerSalary"
+                                                           class="form-control col-15" style="width: 80px" placeholder="请输入薪资下限" required>
+                                                    --
+                                                    <input th:value="*{upperSalary}" type="number" name="upperSalary"
+                                                           class="form-control col-15" style="width: 80px" placeholder="请输入薪资上限" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="card card-success">
+                                    <div class="card-header">
+                                        <h3 class="card-title">职责及要求</h3>
+                                    </div>
+                                    <div class="card-body ml-4">
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <div class="form-inline form-group ">
+                                                    <label class="col-sm-3"><span
+                                                            style="color: red; ">*</span>岗位职责：</label>
+                                                    <div class="col-sm-9">
+                                                            <textarea th:text="*{responsibility}" type="text" name="responsibility"
+                                                                      class="form-control " rows="8" style="width: 100%"
+                                                                      placeholder="请输入岗位职责" required/>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <div class="form-inline form-group ">
+                                                    <label class="col-sm-3"><span
+                                                            style="color: red; ">*</span>岗位要求：</label>
+                                                    <div class="col-sm-9">
+                                                            <textarea th:text="*{requirement}" type="text" name="requirement"
+                                                                      class="form-control " rows="8" style="width: 100%"
+                                                                      placeholder="请输入岗位职责" required/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- /.card-body -->
+                                    </div>
+                                </div>
+
+
+                                <div class="card-footer">
+                                    <div class="row">
+                                        <div class="ml-5">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fa fa-check"></i>&nbsp;提交
+                                            </button>
+                                            <a th:href="@{/position}">
+                                                <button type="button"
+                                                        class="btn btn-default">
+                                                    <i class="fa fa-reply-all"></i>&nbsp;返回
+                                                </button>
+                                            </a>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- /.form -->
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.row -->
+                </div><!-- /.container-fluid -->
+            </div>
+        </section>
+        <!-- /.content -->
+    </div>
+
+    <!--右底部区域-->
+    <th:block th:replace="fragments/main-footer"/>
+
+    <!-- 右上角工具栏 Control Sidebar -->
+    <th:block th:replace="fragments/control-sidebar"/>
+</div>
+<!-- ./wrapper -->
+
+<th:block th:replace="fragments/script :: public-js"/>
+<th:block th:replace="fragments/script :: inputmask-js"/>
+</body>
+</html>

@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <th:block th:replace="fragments/head :: public-css"/>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed ">
+<!-- Site wrapper -->
+<div class="wrapper">
+
+  <!-- 头部区域 Navbar -->
+  <th:block th:replace="fragments/main-header"/>
+  <!-- /.navbar -->
+
+  <!-- 左侧区域 Main Sidebar Container -->
+  <th:block th:replace="fragments/main-sidebar(activeUrl='/')"/>
+
+  <!-- 右侧主区域 Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <section class="content">
+      <div class="card">
+
+        <div class="card-header">
+          <div class="row card-title">
+            <a th:href="@{/}">首页</a>
+            <p th:text="'/' + ${area.name}">首页</p>
+          </div>
+          <a id="cityId" th:text="${area.id}" hidden/>
+          <!-- 工具栏 -->
+          <div class="card-tools">
+            <button type="button" class="btn btn-primary" id="syncButton" title="同步区域信息" onclick="synchronous()">
+              <i class="fa fa-refresh"></i>&nbsp;一键同步
+            </button>
+
+            <button class="btn btn-primary" type="button" id="syncButtonDisable" style="display:none;" disabled>
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              同步中...
+            </button>
+          </div>
+          <!-- /工具栏 -->
+        </div>
+        <div class="card-body">
+          <!-- Small Box (Stat card) -->
+<!--          <h5 class="mb-2 mt-4">平台告警统计</h5>-->
+          <div class="row">
+            <div class="col-lg-3 col-6">
+              <!-- small card -->
+              <div class="small-box bg-info">
+                <div class="inner">
+                  <h3 id="unfinishedCount">0</h3>
+
+                  <p>未完成告警数</p>
+                </div>
+                <div class="icon">
+                  <i class="fas fa-flag"></i>
+                </div>
+              </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+              <!-- small card -->
+              <div class="small-box bg-success">
+                <div class="inner">
+                  <h3 id="alarmUnprocessedCount">0</h3>
+
+                  <p>未处理告警数</p>
+                </div>
+                <div class="icon">
+                  <i class="fas fa-box"></i>
+                </div>
+              </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+              <!-- small card -->
+              <div class="small-box bg-olive">
+                <div class="inner">
+                  <h3 id="alarmProcessingCount">0</h3>
+
+                  <p>处理中告警数</p>
+                </div>
+                <div class="icon">
+                  <i class="fas fa-user-plus"></i>
+                </div>
+              </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+              <!-- small card -->
+              <div class="small-box bg-danger">
+                <div class="inner">
+                  <h3 id="alarmTimeoutCount">0</h3>
+
+                  <p>已超期告警数</p>
+                </div>
+                <div class="icon">
+                  <i class="fas fa-times"></i>
+                </div>
+              </div>
+            </div>
+            <!-- ./col -->
+          </div>
+          <!-- /.row -->
+<!--          <h5>全平台数据统计</h5>-->
+          <h5 class="mt-4 mb-2">全市设备统计</h5>
+          <!-- 搜索栏 -->
+<!--          <form class="form-inline search  text-sm" id="search-form">-->
+<!--            <div class="form-group input-group-sm">-->
+<!--              <span>区域名：</span>-->
+<!--              <input id="username" name="username" type="text" class="form-control" autocomplete="off">-->
+<!--            </div>-->
+<!--            <div class="form-group  ml-3">-->
+<!--              <a class="btn btn-outline-primary btn-sm" onclick="searchForm()" href="#">-->
+<!--                <i class="fa fa-search"></i>&nbsp;搜索-->
+<!--              </a>-->
+<!--              <a class="btn btn-outline-primary btn-sm ml-1" onclick="$('#search-form')[0].reset()" href="#">-->
+<!--                <i class="fa fa-refresh"></i>&nbsp;重置-->
+<!--              </a>-->
+<!--            </div>-->
+<!--          </form>-->
+<!--          <hr>-->
+          <!-- / 搜索栏 -->
+
+          <div class="row">
+            <div class="col-md-4">
+              <!-- /.row -->
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">终端在线率</h3>
+
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i
+                            class="fas fa-minus"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <canvas id="pieChart" style="height:280px; min-height:280px"></canvas>
+                </div>
+                <!-- /.card-body -->
+              </div>
+              <!-- /.card -->
+            </div>
+            <div class="col-md-4">
+              <!-- PIE CHART -->
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">摄像机在线率</h3>
+
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i
+                            class="fas fa-minus"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <canvas id="pieChartCamera" style="height:280px; min-height:280px"></canvas>
+                </div>
+                <!-- /.card-body -->
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="col-12">
+                <div class="info-box bg-info">
+                  <span class="info-box-icon"><i class="far fa-bookmark"></i></span>
+
+                  <div class="info-box-content">
+                    <span class="info-box-text">终端总数</span>
+                    <span class="info-box-number" id="terminalCount"></span>
+                  </div>
+                  <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
+              </div>
+              <!-- /.col -->
+              <div class="col-12">
+                <div class="info-box bg-success">
+                  <span class="info-box-icon"><i class="far fa-bookmark"></i></span>
+
+                  <div class="info-box-content">
+                    <span class="info-box-text">终端在线数</span>
+                    <span class="info-box-number" id="terminalOnlineCount">0</span>
+                  </div>
+                  <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
+              </div>
+              <!-- /.col -->
+              <div class="col-12">
+                <div class="info-box bg-info">
+                  <span class="info-box-icon"><i class="fa fa-camera"></i></span>
+
+                  <div class="info-box-content">
+                    <span class="info-box-text">摄像机总数</span>
+                    <span class="info-box-number" id="cameraCount">0</span>
+                  </div>
+                  <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
+              </div>
+
+              <div class="col-12">
+                <div class="info-box bg-success">
+                  <span class="info-box-icon"><i class="fa fa-camera"></i></span>
+
+                  <div class="info-box-content">
+                    <span class="info-box-text">摄像机在线数</span>
+                    <span class="info-box-number" id="cameraOnlineCount">0</span>
+                  </div>
+                  <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
+              </div>
+            </div>
+          </div>
+
+          <h5 class="mb-2">区县</h5>
+          <div class="row">
+            <div class="col-md-2 col-sm-6 col-12" th:each="area : ${areas}" th:class="${area.type == 1 ? 'col-md-2 col-sm-6 col-12' : ''}">
+              <div  class="info-box" th:if="${area.type == 1}">
+                <span name="area" class="info-box-icon bg-info"><i class="fa fa-map-marker"></i></span>
+
+                <div class="info-box-content">
+                  <span class="info-box-text" th:text="${area.name}">宝安区</span>
+<!--                  <span class="info-box-number">1,410</span>-->
+                  <a href="#" style="color: #0f6674" th:href="@{/area/info/} + ${area.id}" class="info-box-text">
+                    状态详情 <i class="fa fa-arrow-circle-right"></i>
+                  </a>
+                </div>
+                <!-- /.info-box-content -->
+              </div>
+              <!-- /.info-box -->
+            </div>
+            <!-- /.col -->
+          </div>
+
+
+
+
+
+<!--          <h5>平台区域</h5>-->
+<!--          <div class="row">-->
+<!--              <div class="col-lg-3 col-xs-6" th:each="area : ${areas}" th:class="${area.type == 1 ? 'col-lg-3 col-xs-6' : ''}">-->
+<!--                &lt;!&ndash; small box &ndash;&gt;-->
+<!--                  <div name="area" class="small-box bg-success" th:if="${area.type == 1}">-->
+<!--                    <div class="inner">-->
+<!--                      <h3 th:text="${area.name}">宝安区</h3>-->
+<!--                      <p th:text="${area.type == 1 ? '三级区域' : '二级区域'}"></p>-->
+<!--                    </div>-->
+<!--                    <div class="icon">-->
+<!--                      <i class="fa fa-map-marker"></i>-->
+<!--                    </div>-->
+<!--                    <a href="#" th:href="@{/area/info/} + ${area.id}" class="small-box-footer">-->
+<!--                      状态详情 <i class="fa fa-arrow-circle-right"></i>-->
+<!--                    </a>-->
+<!--                  </div>-->
+<!--              </div>-->
+<!--          </div>-->
+<!--          <h5>二级区域</h5>-->
+<!--          <div class="row">-->
+<!--            <div class="col-lg-3 col-xs-6" th:each="area : ${areas}" th:class="${area.type == 2 ? 'col-lg-3 col-xs-6' : ''}">-->
+<!--              &lt;!&ndash; small box &ndash;&gt;-->
+<!--              <div name="city" class="small-box bg-info" th:if="${area.type == 2}">-->
+<!--                <div class="inner">-->
+<!--                  <h3 th:text="${area.name}">宝安区</h3>-->
+<!--                  <p th:text="${area.type == 1 ? '三级区域' : '二级区域'}"></p>-->
+<!--                </div>-->
+<!--                <div class="icon">-->
+<!--                  <i class="fa fa-map-marker"></i>-->
+<!--                </div>-->
+<!--                <a href="#" class="small-box-footer">-->
+<!--                  状态详情 <i class="fa fa-arrow-circle-right"></i>-->
+<!--                </a>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+        </div>
+        <!-- /.card -->
+      </div>
+<!--      <img th:src="@{/modules/img/index.jpg}" src="../modules/img/index.jpg" width="100%" height="100%">-->
+    </section>
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!--右底部区域-->
+  <th:block th:replace="fragments/main-footer"/>
+
+  <!-- 右上角工具栏 Control Sidebar -->
+  <th:block th:replace="fragments/control-sidebar"/>
+  <!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
+
+<th:block th:replace="fragments/script :: public-js"/>
+<script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+
+<script>
+  var classCollection = ["info-box-icon bg-info","info-box-icon bg-success","info-box-icon bg-danger","info-box-icon bg-olive","info-box-icon bg-secondary"];
+
+  var collLen = classCollection.length - 1;
+  window.onload = function f() {
+
+    // alert(collLen);
+    var areas = document.getElementsByName('area');
+    for(var i = 0 ; i < areas.length; i++) {
+      var eleClass = areas[i].getAttribute("class");
+      console.log("class:" + eleClass);
+
+      areas[i].setAttribute("class",classCollection[i <= collLen ? i : (i % (collLen + 1))]);
+    }
+
+    var citys = document.getElementsByName('city');
+    for(var i = 0 ; i < citys.length; i++) {
+      var eleClass = citys[i].getAttribute("class");
+      console.log("class:" + eleClass);
+
+      citys[i].setAttribute("class",classCollection[collLen - (i <= collLen ? i : (i % (collLen + 1)))]);
+    }
+
+    getPlatformData();
+  }
+
+  var deviceOnlinePercent = 0;
+  var cameraOnlinePercent = 0;
+
+  function getPlatformData() {
+
+    var i = document.getElementById('cityId');
+    var cityId = i.text;
+    $.ajax(
+            {
+              //几个参数需要注意一下
+              type: "GET",//方法类型
+              dataType: "json",//预期服务器返回的数据类型
+              url: contextPath + "area/city/" + cityId,
+              success: function (result) {
+
+                console.log(result.data);
+                var unfinishedCount = result.data.alarmUnprocessedCount +  result.data.alarmProcessingCount;
+
+                $("#unfinishedCount").html(unfinishedCount.toString());
+                $("#alarmUnprocessedCount").html(result.data.alarmUnprocessedCount);
+                $("#alarmProcessingCount").html(result.data.alarmProcessingCount);
+                $("#alarmTimeoutCount").html(result.data.alarmTimeoutCount);
+
+                $("#terminalCount").html(result.data.terminalCount);
+                $("#terminalOnlineCount").html(result.data.terminalOnlineCount);
+                $("#cameraCount").html(result.data.cameraCount);
+                $("#cameraOnlineCount").html(result.data.cameraOnlineCount);
+                //
+
+
+                deviceOnlinePercent = result.data.terminalCount == 0 ? 0 : (result.data.terminalOnlineCount * 100.0 / result.data.terminalCount) ;
+                deviceOnlinePercent = deviceOnlinePercent.toFixed(2);
+                cameraOnlinePercent = result.data.cameraCount == 0 ? 0 : (result.data.cameraOnlineCount * 100.0 / result.data.cameraCount);
+                cameraOnlinePercent = cameraOnlinePercent.toFixed(2);
+                //
+                makeJsTable();
+              },
+              error: function () {
+                alert("与区域服务器通信失败,请联系相关区域管理员");
+                makeJsTable();
+              }
+            }
+    );
+  }
+
+  function makeJsTable() {
+
+
+    //-------------
+    //- PIE CHART -
+    //-------------
+    // Get context with jQuery - using jQuery's .get() method.
+    var pieData = {
+      labels: [
+        '在线率',
+        '离线率',
+      ],
+      datasets: [
+        {
+          data: [deviceOnlinePercent, 100 - deviceOnlinePercent],
+          backgroundColor: ['#00a65a', '#f56954'],
+        }
+      ]
+    }
+    var pieChartCanvas = $('#pieChart').get(0).getContext('2d')
+    var pieOptions = {
+      maintainAspectRatio: false,
+      responsive: true,
+    }
+    //Create pie or douhnut chart
+    // You can switch between pie and douhnut using the method below.
+    var pieChart = new Chart(pieChartCanvas, {
+      type: 'pie',
+      data: pieData,
+      options: pieOptions
+    })
+
+
+    //-------------
+    //- PIE CHART -
+    //-------------
+    // Get context with jQuery - using jQuery's .get() method.
+    var pieDataCamera = {
+      labels: [
+        '在线率',
+        '离线率',
+      ],
+      datasets: [
+        {
+          data: [cameraOnlinePercent, 100 - cameraOnlinePercent],
+          backgroundColor: ['#00a65a', '#f56954'],
+        }
+      ]
+    }
+    var pieChartCanvasCamera = $('#pieChartCamera').get(0).getContext('2d')
+    var pieOptionsCamera = {
+      maintainAspectRatio: false,
+      responsive: true,
+    }
+    //Create pie or douhnut chart
+    // You can switch between pie and douhnut using the method below.
+    var pieChartCamera = new Chart(pieChartCanvasCamera, {
+      type: 'pie',
+      data: pieDataCamera,
+      options: pieOptionsCamera
+    })
+  }
+
+  function synchronous() {
+    document.getElementById("syncButton").setAttribute("style","display:none;");
+    document.getElementById("syncButtonDisable").setAttribute("style","display:block;");
+
+    $.ajax({
+      type: "GET",//方法类型
+      dataType: "json",//预期服务器返回的数据类型
+      url: contextPath + "area/sync",
+      success: function (result) {
+        document.getElementById("syncButton").setAttribute("style","display:block;");
+        document.getElementById("syncButtonDisable").setAttribute("style","display:none;");
+        alert("同步成功的区域:" + result.data.success + "\n同步失败的区域:" + result.data.failed);
+      },
+      error: function () {
+        alert("同步失败");
+        makeJsTable();
+      }
+    })
+  }
+</script>
+</body>
+</html>

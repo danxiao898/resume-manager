@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <th:block th:replace="fragments/head :: public-css"/>
+</head>
+
+
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
+<!-- Site wrapper -->
+<div class="wrapper">
+
+    <th:block th:replace="fragments/main-header-user"/>
+
+<!--    &lt;!&ndash; 头部区域 Navbar &ndash;&gt;
+    <th:block th:replace="fragments/main-header"/>
+    &lt;!&ndash; /.navbar &ndash;&gt;
+
+    &lt;!&ndash; 左侧区域 Main Sidebar Container &ndash;&gt;
+    <th:block th:replace="fragments/main-sidebar(activeUrl='/resume/baseInfo')"/>-->
+
+    <!-- 右侧主区域 Content Wrapper. Contains page content -->
+<!--    <div class="content-wrapper  text-sm">-->
+    <div>
+        <!-- 右侧导航区域 Content Header (Page header) -->
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- form start -->
+                        <form th:action="@{/resume/educ}" th:method="post" th:object="${userEducationExperience}">
+                            <input th:value="*{id}" name="id" type="hidden" id="id">
+                            <input th:value="*{userId}" name="userId" type="hidden" id="userId">
+                            <input th:if="*{id != null}" name="_method" value="put" type="hidden">
+
+                            <!-- general form elements -->
+                            <div class="card card-primary">
+                                <div class="card-header">
+                                    <h3 class="card-title">教育经历
+                                    </h3>
+                                </div>
+                                <!-- /.card-header -->
+                                <div class="card-body ml-4">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3"><span style="color: red; ">*</span>校名：</label>
+                                                <div class="col-sm-9">
+                                                    <input th:value="*{schoolName}" type="text" name="schoolName"
+                                                           class="form-control col-15" placeholder="请输入校名" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3"><span style="color: red; ">*</span>专业：</label>
+                                                <div class="col-sm-9">
+                                                    <input th:value="*{major}" type="text" name="major"
+                                                           class="form-control col-15" placeholder="请输入专业名" required>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+                                </div>
+
+                                <div class="card-body ml-4">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3"><span style="color: red; ">*</span>开始时间：</label>
+                                                <div class="col-sm-9">
+                                                    <input th:value="*{#dates.format(startDate,'yyyy-MM-dd')}" type="date" name="startDate"
+                                                           class="form-control col-15" placeholder="请输入开始时间" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3"><span style="color: red; ">*</span>结束时间：</label>
+                                                <div class="col-sm-9">
+                                                    <input th:value="*{#dates.format(endDate,'yyyy-MM-dd')}" type="date" name="endDate"
+                                                           class="form-control col-15" placeholder="请输入结束时间" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="card-body ml-4">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-inline form-group ">
+                                                <label class="col-sm-3"><span style="color: red; ">*</span>学历：</label>
+                                                <div class="col-sm-9">
+                                                    <input th:value="*{educationBackground}" type="text" name="educationBackground"
+                                                           class="form-control col-15" placeholder="请输入学历" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card card-primary">
+                                    <div class="card-header">
+                                        <h3 class="card-title">在校经历</h3>
+                                    </div>
+                                    <div class="card-body ml-4">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="col">
+                                                    <div class="form-inline form-group ">
+                                                        <label class="col-sm-2"><span
+                                                                style="color: red; ">*</span>在校经历:</label>
+                                                        <div class="col-sm-10">
+                                                        <textarea th:text="*{des}" type="text" name="des"
+                                                                  class="form-control " style="width: 100%" rows="8"
+                                                                  placeholder="请输入在校经历" required/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- /.card-body -->
+                                    </div>
+                                </div>
+
+
+                                <div class="card-footer">
+                                    <div class="row">
+                                        <div class="ml-5">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fa fa-check"></i>&nbsp;提交
+                                            </button>
+
+                                            <button th:if="*{id != null}"
+                                                    type="button"
+                                                    onclick="$.deleteResumeInfo(contextPath + 'resume/educ/' + $('#id').val())"
+                                                    class="btn btn-default">
+                                                <i class="fa fa-remove"></i>&nbsp;删除
+                                            </button>
+
+                                            <button type="button" th:onclick="location.href=[[@{/resume/edit}]]"
+                                                    class="btn btn-default">
+                                                <i class="fa fa-reply-all"></i>&nbsp;返回
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- /.form -->
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.row -->
+                </div><!-- /.container-fluid -->
+            </div>
+        </section>
+        <!-- /.content -->
+    </div>
+
+    <!--右底部区域-->
+<!--    <th:block th:replace="fragments/main-footer"/>-->
+
+    <!-- 右上角工具栏 Control Sidebar -->
+    <th:block th:replace="fragments/control-sidebar"/>
+</div>
+<!-- ./wrapper -->
+<!-- jQuery  -->
+<!--<th:block th:replace="fragments/script :: inputmask-js"/>-->
+<!--公共的js-->
+<th:block th:replace="fragments/script :: public-js"/>
+<th:block th:replace="fragments/script :: bootstrap-table-js"/>
+<th:block th:replace="fragments/script :: layer-js"/>
+<!--公共的js-->
+<script th:src="@{/modules/js/common.js}"></script>
+
+</body>
+</html>

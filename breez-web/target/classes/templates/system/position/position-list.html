@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <th:block th:replace="fragments/head :: public-css"/>
+    <th:block th:replace="fragments/head :: bootstrap-table-css"/>
+</head>
+
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
+<!-- Site wrapper -->
+<div class="wrapper">
+
+    <!-- 头部区域 Navbar -->
+    <th:block th:replace="fragments/main-header"/>
+    <!-- /.navbar -->
+
+    <!-- 左侧区域 Main Sidebar Container -->
+    <th:block th:replace="fragments/main-sidebar(activeUrl='/position')"/>
+
+    <!-- 右侧主区域 Content Wrapper. Contains page content -->
+    <div class="content-wrapper  text-sm">
+        <!-- 右侧导航区域 Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>职位管理</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">职位部门</a></li>
+                            <li class="breadcrumb-item active">职位管理</li>
+                        </ol>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+
+        <!-- 右侧内容区域 -->
+        <section class="content">
+            <!-- card -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">职位信息列表</h3>
+                    <!-- 工具栏 -->
+                    <div class="card-tools">
+                        <button th:if="${#authorization.expression('hasAuthority(''sys:position:add'')')}"
+                                type="button" class="btn btn-primary btn-xs"
+                                th:onclick="location.href=[[@{/position/form}]]" data-toggle="tooltip" title="新增">
+                            <i class="fa fa-plus"></i>&nbsp;新增
+                        </button>
+                    </div>
+                    <!-- /工具栏 -->
+                </div>
+
+                <div class="card-body">
+                    <!-- 搜索栏 -->
+                    <form class="form-inline search  text-sm" id="search-form">
+                        <div class="form-group input-group-sm">
+                            <span>职位名：</span>
+                            <input id="name" name="name" type="text" class="form-control" autocomplete="off">
+                        </div>
+
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <div class="form-group input-group-sm">
+                            <span>期望薪资：</span>
+                            <input id="filterSalary" name="filterSalary" type="number" class="form-control" autocomplete="off">
+                        </div>
+
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <div class="form-group input-group-sm">
+                            <span>招聘途径：</span>
+                            <select id="wayType" name="wayType" class="form-control">
+                                <option value="">不限</option>
+                                <option value="1">校招</option>
+                                <option value="2">社招</option>
+                            </select>
+                        </div>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <div class="form-group input-group-sm">
+                            <span>工作地点：</span>
+                            <select id="location" name="location" class="form-control">
+                                <option value="">不限</option>
+                                <option th:each="loc : ${locations}" th:value="${loc}" th:text="${loc}">深圳</option>
+                            </select>
+                        </div>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <div class="form-group input-group-sm">
+                            <span>部门：</span>
+                            <select id="departmentId" name="departmentId" class="form-control">
+                                <option value="">不限</option>
+                                <option th:each="de : ${departments}" th:value="${de.id}" th:text="${de.name}">web开发部</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group  ml-3">
+                            <a class="btn btn-outline-primary btn-sm" onclick="searchForm()" href="#">
+                                <i class="fa fa-search"></i>&nbsp;搜索
+                            </a>
+                            <a class="btn btn-outline-primary btn-sm ml-1" onclick="$('#search-form')[0].reset()"
+                               href="#">
+                                <i class="fa fa-refresh"></i>&nbsp;重置
+                            </a>
+                        </div>
+                    </form>
+                    <hr>
+                    <!-- / 搜索栏 -->
+
+                    <!-- 列表 -->
+                    <table id="table" class="table table-bordered">
+                    </table>
+
+                </div>
+                <!-- /.card -->
+            </div>
+        </section>
+        <!-- / 右侧内容区域 -->
+
+    </div>
+    <!-- /.content-wrapper -->
+
+    <!--右底部区域-->
+    <th:block th:replace="fragments/main-footer"/>
+
+    <!-- 右上角工具栏 Control Sidebar -->
+    <th:block th:replace="fragments/control-sidebar"/>
+
+</div>
+<!-- ./wrapper -->
+
+<th:block th:replace="fragments/script :: public-js"/>
+<th:block th:replace="fragments/script :: bootstrap-table-js"/>
+<th:block th:replace="fragments/script :: layer-js"/>
+
+<!--公共的js-->
+<script th:src="@{/modules/js/common.js}"></script>
+<script th:src="@{/modules/js/position/position-list.js}"></script>
+<script th:inline="javascript">
+
+    function getOperationHtml(operationHtml, row) {
+
+        if (
+            /*[[${#authorization.expression('hasAuthority("sys:position:list")')}]]*/
+        ) {
+            operationHtml.push('<li><a class="dropdown-item btn btn-primary" href="' + contextPath + 'position/view/' + row.id + '" ><i class="fa fa-street-view"></i>&nbsp;查看</a></li>')
+        }
+
+        if (
+            /*[[${#authorization.expression('hasAuthority("sys:position:edit")')}]]*/
+        ) {
+            operationHtml.push('<li><a class="dropdown-item btn btn-primary" href="' + contextPath + 'position/form/' + row.id + '" ><i class="fa fa-edit"></i>&nbsp;修改</a></li>')
+        }
+
+
+
+        if (
+            /*[[${#authorization.expression('hasAuthority("sys:position:delete")')}]]*/
+        ) {
+            operationHtml.push('<li><a onclick="$.delete(\'' + contextPath + 'position/' + row.id + '\')" class="dropdown-item"  href="#" ><i class="fa fa-trash"></i>&nbsp;删除</a></li>')
+        }
+
+    }
+
+    // 权限判断是否显示操作列
+    function showOperation() {
+        if (
+            /*[[
+              ${#authorization.expression('hasAuthority("sys:position:delete")')}
+              or
+              ${#authorization.expression('hasAuthority("sys:position:edit")')}
+              or
+              ${#authorization.expression('hasAuthority("sys:position:list")')}
+            ]]*/
+        ) {
+            $table.bootstrapTable('showColumn', 'action');
+        }
+    }
+</script>
+
+</body>
+</html>
