@@ -106,9 +106,9 @@ mengxuegu:
         - /plugins/**
         - /assets/**
         - /ow/**
-        - /position/apply # 放行职位查找界面
-        - /position/customPage # 放行职位信息获取界面
-        - /position/apply/info/** # 放行职位详情界面
+#        - /position/apply # 放行职位查找界面
+#        - /position/customPage # 放行职位信息获取界面
+#        - /position/apply/info/** # 放行职位详情界面
         - /webjars/** #放行webjars
         - /user/register
         - /user/sendCode

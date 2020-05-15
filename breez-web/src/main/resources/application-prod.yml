@@ -61,16 +61,6 @@ spring:
     hiddenmethod:
       filter:
         enabled: true #springBoot 2.2版本后要手动开启对delete、put方法的处理
-  mail:
-    username: zhangzhiquan@breez.com.cn
-    password: JBQu7vQ7NXWBWPvz
-    host: smtp.exmail.qq.com
-    properties:
-      smtp.ssl.enable: true
-      mail.smtp.connectiontimeout: 5000
-      mail.smtp.timeout: 3000
-      mail.smtp.writetimeout: 5000
-    port: 25
 
 
 mybatis-plus:

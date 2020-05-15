@@ -3,6 +3,7 @@ package com.breez.web.controller;
 import com.breez.base.result.BreezResult;
 import com.breez.web.entities.*;
 import com.breez.web.service.*;
+import com.breez.web.utils.SysUtils;
 import com.breez.web.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -166,6 +167,11 @@ public class ResumeController {
                 //文件上传的地址
                 path = ResourceUtils.getURL("classpath:").getPath()+"static/upload/";
 //                String realPath = path.replace('/', '\\').substring(1,path.length());
+                if(SysUtils.isWindows()) {
+                    //windows系统做特殊处理
+                    path = path.replace('/', '\\').substring(1,path.length());
+                }
+
                 //用于查看路径是否正确
                 System.out.println(path);
 
@@ -186,6 +192,7 @@ public class ResumeController {
             }
 
 
+            userBaseInfo.setUserId(sysUserService.getCurrentUser().getId());
 //            File file = new File(filePath + fileName);
 //            System.out.println(file.getName());
         }
